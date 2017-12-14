@@ -8,13 +8,11 @@ class GuiseppesMenu
     @menu = Nokogiri::XML(File.open('./xml_menu.xml'))
   end
 
-  def get_menu_names
+  def calories_below_1000
     calories_not_full_breakfast = []
-    @menu.search("name").each do |name|
-      if name.text != 'Full Breakfast'
-        @menu.search('calories').each do |calories|
-          calories_not_full_breakfast.push(calories.text.to_i)
-        end
+    @menu.search("food").each do |food|
+      if food.search("name").text != "Full Breakfast"
+        calories_not_full_breakfast.push(food.search("calories").text.to_i)
       end
     end
     calories_not_full_breakfast
@@ -45,5 +43,20 @@ class GuiseppesMenu
     @menu.xpath('//description').text
   end
 
+  def waffles_specify_two
+    two_waffles_array = []
+    @menu.search("food").each do |food|
+      if food.search("name").text.split.last == "Waffles"
+        if food.search("description").text.split.first == "Two"
+          two_waffles_array.push(true)
+        else
+          two_waffles_array.push(false)
+        end
+      end
+    end
+    two_waffles_array
+  end
 
 end
+something = GuiseppesMenu.new
+something.waffles_specify_two
